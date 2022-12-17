@@ -42,26 +42,42 @@ public static class Parser {
     /// Parses a string into a dictionary of arguments
     /// </summary>
     /// <param name="str"></param>
-    public static Dictionary<string, string> ParseArguments(string str) {
-        return ParseArguments(Split(str));
+    /// <param name="commandKey">The dictionary key which will hold the command</param>
+    /// <remarks>
+    /// <paramref name="commandKey"/> Allows having a command and a parameter with the same name
+    /// </remarks>
+    public static Dictionary<string, string> ParseArguments(string str, string commandKey = "Command") {
+        return ParseArguments(Split(str), commandKey);
     }
 
     /// <summary>
-    /// Parses an IEnumerable<string> into a dictionary of arguments
+    /// Parses a collection of strings into a dictionary of arguments
     /// </summary>
     /// <param name="args"></param>
-    public static Dictionary<string, string> ParseArguments(IEnumerable<string> args) {
-        return ParseArgumentsInternal(CollectionsMarshal.AsSpan(args.ToList()));
+    /// <param name="commandKey">The dictionary key which will hold the command</param>
+    /// <remarks>
+    /// <para><paramref name="args"/> will be enumerated, to prevent double enumeration use the Parser.Split(string) method to create the parameter</para>
+    /// <para><paramref name="commandKey"/> Allows having a command and a parameter with the same name</para>
+    /// </remarks>
+    public static Dictionary<string, string> ParseArguments(IEnumerable<string> args, string commandKey = "Command") {
+        return ParseArgumentsInternal(CollectionsMarshal.AsSpan(args.ToList()), commandKey);
     }
 
     // Parses a span<string> into a dictionary of arguments
-    private static Dictionary<string, string> ParseArgumentsInternal(Span<string> args) {
+    private static Dictionary<string, string> ParseArgumentsInternal(Span<string> args, string commandKey) {
         if (args.IsEmpty) {
             throw new ArgumentException("Args cannot be empty", nameof(args));
         }
 
         var results = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
         int i = 0;
+
+        var first = args[i].Trim();
+        // first value is a command
+        if (!IsParameterName(first)) {
+            results.Add(commandKey, first);
+            i++;
+        }
 
         while (i < args.Length) {
             var current = args[i].Trim();
@@ -91,6 +107,7 @@ public static class Parser {
         return results;
     }
 
+    // Checks whether a string starts with "-"
     private static bool IsParameterName(ReadOnlySpan<char> str) {
         return str.StartsWith("-");
     }
