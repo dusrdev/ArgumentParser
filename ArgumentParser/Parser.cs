@@ -1,16 +1,18 @@
-﻿using System.Runtime.InteropServices;
-
-namespace ArgumentParser;
+﻿namespace ArgumentParser;
 
 /// <summary>
 /// Command line argument parser
 /// </summary>
 public static class Parser {
     /// <summary>
-    /// Very efficiently splits an input into an IEnumerable, respects quotes
+    /// Very efficiently splits an input into a List of strings, respects quotes
     /// </summary>
     /// <param name="str"></param>
-    public static IEnumerable<string> Split(string str) {
+    public static List<string> Split(string str) {
+        List<string> args = new();
+        if (string.IsNullOrWhiteSpace(str)) {
+            return args;
+        }
         int i = 0;
         while (i < str.Length) {
             char c = str[i];
@@ -21,21 +23,22 @@ public static class Parser {
             if (c is '"') {
                 int nextQuote = str.IndexOf('"', i + 1);
                 if (nextQuote <= 0) {
-                    yield break;
+                    break;
                 }
-                yield return str[(i + 1)..nextQuote];
+                args.Add(str[(i + 1)..nextQuote]);
                 i = nextQuote + 1;
                 continue;
             }
             int nextSpace = str.IndexOf(' ', i);
             if (nextSpace <= 0) {
-                yield return str[i..];
+                args.Add(str[i..]);
                 i = str.Length;
                 continue;
             }
-            yield return str[i..nextSpace];
+            args.Add(str[i..nextSpace]);
             i = nextSpace + 1;
         }
+        return args;
     }
 
     /// <summary>
@@ -46,8 +49,13 @@ public static class Parser {
     /// <remarks>
     /// <paramref name="commandKey"/> Allows having a command and a parameter with the same name
     /// </remarks>
+    /// <exception cref="ArgumentException">If str could not be parsed</exception>
     public static Dictionary<string, string> ParseArguments(string str, string commandKey = "Command") {
-        return ParseArguments(Split(str), commandKey);
+        var argList = Split(str);
+        if (argList.Count is 0) {
+            throw new ArgumentException("Count not be parsed into arguments", nameof(str));
+        }
+        return ParseArguments(argList, commandKey);
     }
 
     /// <summary>
@@ -56,19 +64,18 @@ public static class Parser {
     /// <param name="args"></param>
     /// <param name="commandKey">The dictionary key which will hold the command</param>
     /// <remarks>
-    /// <para><paramref name="args"/> will be enumerated, to prevent double enumeration use the Parser.Split(string) method to create the parameter</para>
     /// <para><paramref name="commandKey"/> Allows having a command and a parameter with the same name</para>
     /// </remarks>
-    public static Dictionary<string, string> ParseArguments(IEnumerable<string> args, string commandKey = "Command") {
-        return ParseArgumentsInternal(CollectionsMarshal.AsSpan(args.ToList()), commandKey);
-    }
-
-    // Parses a span<string> into a dictionary of arguments
-    private static Dictionary<string, string> ParseArgumentsInternal(Span<string> args, string commandKey) {
-        if (args.IsEmpty) {
+    /// <exception cref="ArgumentException">If args is empty</exception>
+    public static Dictionary<string, string> ParseArguments(List<string> args, string commandKey = "Command") {
+        if (args.Count is 0) {
             throw new ArgumentException("Args cannot be empty", nameof(args));
         }
+        return ParseArgumentsInternal(args, commandKey);
+    }
 
+    // Parses a List<string> into a dictionary of arguments
+    private static Dictionary<string, string> ParseArgumentsInternal(List<string> args, string commandKey) {
         var results = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
         int i = 0;
 
@@ -79,7 +86,7 @@ public static class Parser {
             i++;
         }
 
-        while (i < args.Length) {
+        while (i < args.Count) {
             var current = args[i].Trim();
             // Command name or similar
             if (!IsParameterName(current)) {
@@ -93,7 +100,7 @@ public static class Parser {
                 ii++;
             }
             // Next is unavailable or another parameter
-            if (i + 1 == args.Length || IsParameterName(args[i + 1])) {
+            if (i + 1 == args.Count || IsParameterName(args[i + 1])) {
                 results.Add(current[ii..], string.Empty);
                 i++;
                 continue;
