@@ -12,15 +12,15 @@ public class ParserTests {
     [TestMethod]
     public void SplitTest_WithQuotes() {
         string input = "my name is \"Tacitus Kilgore\"";
-        var expected = new[] { "my", "name", "is", "Tacitus Kilgore" };
-        CollectionAssert.AreEqual(expected, Parser.Split(input).ToArray());
+        var expected = new List<string> { "my", "name", "is", "Tacitus Kilgore" };
+        CollectionAssert.AreEqual(expected, Parser.Split(input));
     }
 
     [TestMethod]
     public void SplitTest_WithoutQuotes() {
         string input = "my name is Tacitus Kilgore";
-        var expected = new[] { "my", "name", "is", "Tacitus", "Kilgore" };
-        CollectionAssert.AreEqual(expected, Parser.Split(input).ToArray());
+        var expected = new List<string> { "my", "name", "is", "Tacitus", "Kilgore" };
+        CollectionAssert.AreEqual(expected, Parser.Split(input));
     }
 
     [TestMethod]
