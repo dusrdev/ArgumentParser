@@ -8,27 +8,44 @@ public static class ParserExtensions {
     /// <param name="key"></param>
     /// <param name="throwIfUnable">Throw an appropriate exception if unable to convert the value</param>
     /// <exception cref="KeyNotFoundException">If the key was not found</exception>
-    /// <exception cref="ArgumentNullException">If the value was NullOrWhiteSpace</exception>
-    /// <exception cref="ArgumentException">If the value could not be parsed</exception>
+    /// <exception cref="ArgumentException">If the value was null or could not be parsed</exception>
     /// <remarks>
-    /// A null return value is only possible if <paramref name="throwIfUnable"/> is false
+    /// <para>A null return value is only possible if <paramref name="throwIfUnable"/> is false</para>
+    /// <para>The <paramref name="key"/> will be added either to the message or as a property to the exceptions in order to maintain detail</para>
     /// </remarks>
     public static int? GetIntegerValue(this Dictionary<string, string> arguments, string key, bool throwIfUnable = false) {
+        return arguments.GetIntegerValue(key, throwIfUnable, Parser.ExceptionMessages);
+    }
+
+    /// <summary>
+    /// Attempts to convert a value to an integer
+    /// </summary>
+    /// <param name="arguments"></param>
+    /// <param name="key"></param>
+    /// <param name="throwIfUnable">Throw an appropriate exception if unable to convert the value</param>
+    /// <param name="messages">Adds an option to override the exception output message</param>
+    /// <exception cref="KeyNotFoundException">If the key was not found</exception>
+    /// <exception cref="ArgumentException">If the value was null or could not be parsed</exception>
+    /// <remarks>
+    /// <para>A null return value is only possible if <paramref name="throwIfUnable"/> is false</para>
+    /// <para>The <paramref name="key"/> will be added either to the message or as a property to the exceptions in order to maintain detail</para>
+    /// </remarks>
+    public static int? GetIntegerValue(this Dictionary<string, string> arguments, string key, bool throwIfUnable, ParserExceptionMessages messages) {
         if (!arguments.TryGetValue(key, out string? value)) {
             if (throwIfUnable) {
-                throw new KeyNotFoundException($"Unable to find key '{key}' in arguments.");
+                throw new KeyNotFoundException($"{messages.KeyNotFound} --> Key: \"{key}\"");
             }
             return null;
         }
         if (string.IsNullOrWhiteSpace(value)) {
             if (throwIfUnable) {
-                throw new ArgumentNullException($"Value for key '{key}' was null or whitespace.");
+                throw new ArgumentException(messages.Null, key);
             }
             return null;
         }
-        if (!int.TryParse(value, out int result)) {
+        if (!int.TryParse(value, out var result)) {
             if (throwIfUnable) {
-                throw new ArgumentException($"Unable to parse value '{value}' for key '{key}' as an integer.");
+                throw new ArgumentException(messages.Invalid, key);
             }
             return null;
         }
@@ -42,27 +59,44 @@ public static class ParserExtensions {
     /// <param name="key"></param>
     /// <param name="throwIfUnable">Throw an appropriate exception if unable to convert the value</param>
     /// <exception cref="KeyNotFoundException">If the key was not found</exception>
-    /// <exception cref="ArgumentNullException">If the value was NullOrWhiteSpace</exception>
-    /// <exception cref="ArgumentException">If the value could not be parsed</exception>
+    /// <exception cref="ArgumentException">If the value was null or could not be parsed</exception>
     /// <remarks>
-    /// A null return value is only possible if <paramref name="throwIfUnable"/> is false
+    /// <para>A null return value is only possible if <paramref name="throwIfUnable"/> is false</para>
+    /// <para>The <paramref name="key"/> will be added either to the message or as a property to the exceptions in order to maintain detail</para>
     /// </remarks>
     public static double? GetDoubleValue(this Dictionary<string, string> arguments, string key, bool throwIfUnable = false) {
+        return arguments.GetDoubleValue(key, throwIfUnable, Parser.ExceptionMessages);
+    }
+
+    /// <summary>
+    /// Attempts to convert a value to a double
+    /// </summary>
+    /// <param name="arguments"></param>
+    /// <param name="key"></param>
+    /// <param name="throwIfUnable">Throw an appropriate exception if unable to convert the value</param>
+    /// <param name="messages">Adds an option to override the exception output message</param>
+    /// <exception cref="KeyNotFoundException">If the key was not found</exception>
+    /// <exception cref="ArgumentException">If the value was null or could not be parsed</exception>
+    /// <remarks>
+    /// <para>A null return value is only possible if <paramref name="throwIfUnable"/> is false</para>
+    /// <para>The <paramref name="key"/> will be added either to the message or as a property to the exceptions in order to maintain detail</para>
+    /// </remarks>
+    public static double? GetDoubleValue(this Dictionary<string, string> arguments, string key, bool throwIfUnable, ParserExceptionMessages messages) {
         if (!arguments.TryGetValue(key, out string? value)) {
             if (throwIfUnable) {
-                throw new KeyNotFoundException($"Unable to find key '{key}' in arguments.");
+                throw new KeyNotFoundException($"{messages.KeyNotFound} --> Key: \"{key}\"");
             }
             return null;
         }
         if (string.IsNullOrWhiteSpace(value)) {
             if (throwIfUnable) {
-                throw new ArgumentNullException($"Value for key '{key}' was null or whitespace.");
+                throw new ArgumentException(messages.Null, key);
             }
             return null;
         }
-        if (!double.TryParse(value, out double result)) {
+        if (!double.TryParse(value, out var result)) {
             if (throwIfUnable) {
-                throw new ArgumentException($"Unable to parse value '{value}' for key '{key}' as a double.");
+                throw new ArgumentException(messages.Invalid, key);
             }
             return null;
         }
@@ -76,27 +110,44 @@ public static class ParserExtensions {
     /// <param name="key"></param>
     /// <param name="throwIfUnable">Throw an appropriate exception if unable to convert the value</param>
     /// <exception cref="KeyNotFoundException">If the key was not found</exception>
-    /// <exception cref="ArgumentNullException">If the value was NullOrWhiteSpace</exception>
-    /// <exception cref="ArgumentException">If the value could not be parsed</exception>
+    /// <exception cref="ArgumentException">If the value was null or could not be parsed</exception>
     /// <remarks>
-    /// A null return value is only possible if <paramref name="throwIfUnable"/> is false
+    /// <para>A null return value is only possible if <paramref name="throwIfUnable"/> is false</para>
+    /// <para>The <paramref name="key"/> will be added either to the message or as a property to the exceptions in order to maintain detail</para>
     /// </remarks>
     public static decimal? GetDecimalValue(this Dictionary<string, string> arguments, string key, bool throwIfUnable = false) {
+        return arguments.GetDecimalValue(key, throwIfUnable, Parser.ExceptionMessages);
+    }
+
+    /// <summary>
+    /// Attempts to convert a value to a decimal
+    /// </summary>
+    /// <param name="arguments"></param>
+    /// <param name="key"></param>
+    /// <param name="throwIfUnable">Throw an appropriate exception if unable to convert the value</param>
+    /// <param name="messages">Adds an option to override the exception output message</param>
+    /// <exception cref="KeyNotFoundException">If the key was not found</exception>
+    /// <exception cref="ArgumentException">If the value was null or could not be parsed</exception>
+    /// <remarks>
+    /// <para>A null return value is only possible if <paramref name="throwIfUnable"/> is false</para>
+    /// <para>The <paramref name="key"/> will be added either to the message or as a property to the exceptions in order to maintain detail</para>
+    /// </remarks>
+    public static decimal? GetDecimalValue(this Dictionary<string, string> arguments, string key, bool throwIfUnable, ParserExceptionMessages messages) {
         if (!arguments.TryGetValue(key, out string? value)) {
             if (throwIfUnable) {
-                throw new KeyNotFoundException($"Unable to find key '{key}' in arguments.");
+                throw new KeyNotFoundException($"{messages.KeyNotFound} --> Key: \"{key}\"");
             }
             return null;
         }
         if (string.IsNullOrWhiteSpace(value)) {
             if (throwIfUnable) {
-                throw new ArgumentNullException($"Value for key '{key}' was null or whitespace.");
+                throw new ArgumentException(messages.Null, key);
             }
             return null;
         }
-        if (!decimal.TryParse(value, out decimal result)) {
+        if (!decimal.TryParse(value, out var result)) {
             if (throwIfUnable) {
-                throw new ArgumentException($"Unable to parse value '{value}' for key '{key}' as an decimal.");
+                throw new ArgumentException(messages.Invalid, key);
             }
             return null;
         }
