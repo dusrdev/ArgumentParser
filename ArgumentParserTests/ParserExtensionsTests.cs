@@ -129,5 +129,35 @@ namespace ArgumentParser.Tests {
         public void GetDecimalValueTest_Throw_Valid() {
             Assert.AreEqual(5.5m, Arguments.GetDecimalValue("ValidDouble", true));
         }
+
+        [TestMethod]
+        public void GetStringValueTest_NotFound() {
+            Assert.IsNull(Arguments.GetStringValue("InvalidKey"));
+        }
+
+        [TestMethod]
+        public void GetStringValueTest_Found() {
+            Assert.AreEqual("abcd", Arguments.GetStringValue("Text"));
+        }
+
+        [TestMethod]
+        public void GetStringValueTest_FoundNull() {
+            Assert.IsNull(Arguments.GetStringValue("Null"));
+        }
+
+        [TestMethod]
+        public void GetStringValueTest_NotFound_Throw() {
+            Assert.ThrowsException<KeyNotFoundException>(() => Arguments.GetStringValue("InvalidKey", true));
+        }
+
+        [TestMethod]
+        public void GetStringValueTest_FoundNull_Throw() {
+            Assert.ThrowsException<ArgumentException>(() => Arguments.GetStringValue("Null", true));
+        }
+
+        [TestMethod]
+        public void EnsureKeyExistsTest() {
+            Assert.ThrowsException<KeyNotFoundException>(() => Arguments.EnsureKeyExists("InvalidKey"));
+        }
     }
 }
