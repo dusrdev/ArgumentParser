@@ -37,7 +37,7 @@ namespace ArgumentParser.Tests {
 
         [TestMethod]
         public void GetIntegerValueTest_Throw_Null() {
-            Assert.ThrowsException<ArgumentNullException>(() => Arguments.GetIntegerValue("Null", true));
+            Assert.ThrowsException<ArgumentException>(() => Arguments.GetIntegerValue("Null", true));
         }
 
         [TestMethod]
@@ -77,7 +77,7 @@ namespace ArgumentParser.Tests {
 
         [TestMethod]
         public void GetDoubleValueTest_Throw_Null() {
-            Assert.ThrowsException<ArgumentNullException>(() => Arguments.GetDoubleValue("Null", true));
+            Assert.ThrowsException<ArgumentException>(() => Arguments.GetDoubleValue("Null", true));
         }
 
         [TestMethod]
@@ -117,7 +117,7 @@ namespace ArgumentParser.Tests {
 
         [TestMethod]
         public void GetDecimalValueTest_Throw_Null() {
-            Assert.ThrowsException<ArgumentNullException>(() => Arguments.GetDecimalValue("Null", true));
+            Assert.ThrowsException<ArgumentException>(() => Arguments.GetDecimalValue("Null", true));
         }
 
         [TestMethod]
