@@ -4,6 +4,8 @@
 /// Command line argument parser
 /// </summary>
 public static class Parser {
+    internal readonly static ParserExceptionMessages ExceptionMessages = new();
+
     /// <summary>
     /// Very efficiently splits an input into a List of strings, respects quotes
     /// </summary>
