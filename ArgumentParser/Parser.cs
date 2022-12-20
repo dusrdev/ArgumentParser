@@ -4,8 +4,6 @@
 /// Command line argument parser
 /// </summary>
 public static class Parser {
-    internal readonly static ParserExceptionMessages ExceptionMessages = new();
-
     /// <summary>
     /// Very efficiently splits an input into a List of strings, respects quotes
     /// </summary>
@@ -44,76 +42,75 @@ public static class Parser {
     }
 
     /// <summary>
-    /// Parses a string into a dictionary of arguments
+    /// Parses a string into an <see cref="Arguments"/> object
     /// </summary>
     /// <param name="str"></param>
-    /// <param name="commandKey">The dictionary key which will hold the command</param>
-    /// <remarks>
-    /// <paramref name="commandKey"/> Allows having a command and a parameter with the same name
-    /// </remarks>
-    /// <exception cref="ArgumentException">If str could not be parsed</exception>
-    public static Dictionary<string, string> ParseArguments(string str, string commandKey = "Command") {
+    public static Arguments? ParseArguments(string str) {
         var argList = Split(str);
         if (argList.Count is 0) {
-            throw new ArgumentException("Count not be parsed into arguments", nameof(str));
+            return null;
         }
-        return ParseArguments(argList, commandKey);
+        return ParseArguments(argList);
     }
 
     /// <summary>
-    /// Parses a collection of strings into a dictionary of arguments
+    /// Parses a list of strings into an <see cref="Arguments"/> object
     /// </summary>
     /// <param name="args"></param>
-    /// <param name="commandKey">The dictionary key which will hold the command</param>
-    /// <remarks>
-    /// <para><paramref name="commandKey"/> Allows having a command and a parameter with the same name</para>
-    /// </remarks>
-    /// <exception cref="ArgumentException">If args is empty</exception>
-    public static Dictionary<string, string> ParseArguments(List<string> args, string commandKey = "Command") {
+    public static Arguments? ParseArguments(List<string> args) {
         if (args.Count is 0) {
-            throw new ArgumentException("Args cannot be empty", nameof(args));
+            return null;
         }
-        return ParseArgumentsInternal(args, commandKey);
+        return ParseArgumentsInternal(args);
+    }
+
+    /// <summary>
+    /// Parses an array of strings into an <see cref="Arguments"/> object
+    /// </summary>
+    /// <param name="args"></param>
+    public static Arguments? ParseArguments(string[] args) {
+        if (args.Length is 0) {
+            return null;
+        }
+        var argList = new List<string>(args);
+        return ParseArgumentsInternal(argList);
     }
 
     // Parses a List<string> into a dictionary of arguments
-    private static Dictionary<string, string> ParseArgumentsInternal(List<string> args, string commandKey) {
+    private static Arguments? ParseArgumentsInternal(List<string> args) {
         var results = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
         int i = 0;
 
-        var first = args[i].Trim();
-        // first value is a command
-        if (!IsParameterName(first)) {
-            results.Add(commandKey, first);
+        while (i < args.Count && !IsParameterName(args[i])) {
+            results.Add(i.ToString(), args[i].Trim());
             i++;
         }
 
         while (i < args.Count) {
             var current = args[i].Trim();
-            // Command name or similar
+            // Ignore string as it is invalid parameter name
             if (!IsParameterName(current)) {
-                results.Add(current, string.Empty);
                 i++;
                 continue;
             }
             // Parameter name
             int ii = 0;
-            while (current[ii] == '-') {
+            while (current[ii] is '-') {
                 ii++;
             }
             // Next is unavailable or another parameter
             if (i + 1 == args.Count || IsParameterName(args[i + 1])) {
-                results.Add(current[ii..], string.Empty);
+                results.Add(current[ii..].Trim(), string.Empty);
                 i++;
                 continue;
             }
             // Next is available and not a parameter but rather a value
             var next = args[i + 1].Trim();
-            results.Add(current[ii..], next);
+            results.Add(current[ii..].Trim(), next);
             i += 2;
         }
 
-        return results;
+        return results.Count == 0 ? null : new Arguments(results);
     }
 
     // Checks whether a string starts with "-"
