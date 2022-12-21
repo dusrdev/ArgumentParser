@@ -14,7 +14,6 @@ This feature is crucial when you want to be able to compile your cli's to native
 
 ## ⬇ Installation
 
-* The last stable release will be available in the releases section in a .dll format.
 * Nuget   [![](https://img.shields.io/nuget/dt/Sagittarius?label=Downloads)](https://www.nuget.org/packages/Sagittarius/)
 
 ## Usage
