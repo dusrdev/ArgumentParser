@@ -156,25 +156,44 @@ public class Arguments {
     /// Validates the value of an argument by the key
     /// </summary>
     /// <param name="key">by name (or number if positional argument)</param>
-    /// <param name="validator">a validation function</param>
+    /// <param name="validationFunc">a validation function</param>
     /// <param name="errorMessage">if the validation function returns false</param>
     /// <exception cref="KeyNotFoundException">If the key is not found</exception>
-    /// <exception cref="ArgumentException">If the value is NullOrWhiteSpace, or the validation function returns false</exception>
+    /// <exception cref="ArgumentException">If the validation function returns false</exception>
     /// <remarks>
+    /// <para>
     /// For positional arguments enter the position as a string (e.g. "0" for the first argument and so on)
+    /// </para>
+    /// <para>
+    /// If you require the value to be non-empty you will need to apply the <paramref name="validationFunc"/>, as if it was checked by default it would throw for boolean arguments/parameters
+    /// </para>
     /// </remarks>
-    public void Validate(string key, Func<string, bool>? validator = null, string? errorMessage = null) {
+    public void Validate(string key, Func<string, bool>? validationFunc = null, string? errorMessage = null) {
         if (!_arguments.TryGetValue(key, out string? value)) {
             if (key.All(char.IsDigit)) {
                 throw new KeyNotFoundException($"The positional argument for position {key} wasn't found.");
             }
             throw new KeyNotFoundException($"The named argument \"{key}\" wasn't found.");
         }
-        if (string.IsNullOrWhiteSpace(value)) {
-            throw new ArgumentException($"The value for named argument \"{key}\" was null or whitespace.");
-        }
-        if (validator is not null && !validator(value)) {
+        if (validationFunc is not null && !validationFunc(value)) {
             throw new ArgumentException(errorMessage, key);
+        }
+    }
+
+    /// <summary>
+    /// Forwards the positional arguments by 1, so that argument that was 1 is now 0, 2 is now 1 and so on
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// This is useful if you have a command that has a sub-command and you want to pass the arguments to the sub-command
+    /// </para>
+    /// <para>
+    /// The first positional argument (0) will be removed
+    /// </para>
+    /// </remarks>
+    public void ForwardPositionalArguments() {
+        for (int i = 1; _arguments.TryGetValue(i.ToString(), out string? value); i++) {
+            _arguments[(i - 1).ToString()] = value;
         }
     }
 
