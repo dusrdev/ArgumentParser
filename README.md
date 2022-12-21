@@ -1,6 +1,6 @@
-﻿# ArgumentParser
+﻿# Sagittarius
 
-ArgumentParser is a package created with the purpose of making it easier to parse command line arguments without using reflection.
+Sagittarius is a package created with the purpose of making it easier to parse command line arguments without using reflection.
 While there are many other packages that parse arguments, I have yet to see an easy to use one that doesn't use reflection.
 This feature is crucial when you want to be able to compile your cli's to native code, as we are now able with .NET 7.
 

@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ArgumentParser;
+using Sagittarius;
 
-namespace ArgumentParser.Tests {
+namespace Sagittarius.Tests {
     [TestClass]
     public class ArgumentsTests {
         private static readonly Arguments Arguments = Parser.ParseArguments("--null \"\" --text abcd --validint 5 --validdouble 5.5")!;

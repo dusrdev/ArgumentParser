@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace ArgumentParser.Tests;
+namespace Sagittarius.Tests;
 
 [TestClass]
 public class ParserTests {

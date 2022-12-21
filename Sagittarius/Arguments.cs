@@ -1,4 +1,4 @@
-﻿namespace ArgumentParser;
+﻿namespace Sagittarius;
 
 /// <summary>
 /// A wrapper class over a dictionary of string : string with additional features

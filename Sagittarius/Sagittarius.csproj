@@ -8,7 +8,7 @@
     <Authors>David Shnayder</Authors>
     <Copyright>David Shnayder - 2022</Copyright>
     <Description>Performant reflection-less argument parser</Description>
-    <PackageProjectUrl>https://github.com/dusrdev/ArgumentParser</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/dusrdev/Sagittarius</PackageProjectUrl>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>

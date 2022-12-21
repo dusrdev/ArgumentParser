@@ -1,4 +1,4 @@
-﻿namespace ArgumentParser;
+﻿namespace Sagittarius;
 
 /// <summary>
 /// Command line argument parser

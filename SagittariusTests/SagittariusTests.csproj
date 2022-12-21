@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ArgumentParser\ArgumentParser.csproj" />
+    <ProjectReference Include="..\Sagittarius\Sagittarius.csproj" />
   </ItemGroup>
 
 </Project>
