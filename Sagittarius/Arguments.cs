@@ -192,6 +192,7 @@ public class Arguments {
     /// </para>
     /// </remarks>
     public void ForwardPositionalArguments() {
+        _ = _arguments.Remove("0");
         for (int i = 1; _arguments.TryGetValue(i.ToString(), out string? value); i++) {
             _arguments[(i - 1).ToString()] = value;
         }
