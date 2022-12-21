@@ -145,7 +145,7 @@ namespace ArgumentParser.Tests {
         public void GetStringValueTest_NotFound_Throw() {
             Assert.ThrowsException<KeyNotFoundException>(() => Arguments.GetValue("InvalidKey", true));
         }
-        
+
         [TestMethod]
         public void GetStringValueTest_FoundNull_Throw() {
             Assert.ThrowsException<ArgumentException>(() => Arguments.GetValue("Null", true));
@@ -159,6 +159,27 @@ namespace ArgumentParser.Tests {
         [TestMethod]
         public void Validate_ThrowsException_WhenValueIsInvalid() {
             Assert.ThrowsException<ArgumentException>(() => Arguments.Validate("Text", v => v.All(char.IsDigit), "Value must be numeric"));
+        }
+
+        [TestMethod]
+        public void GetInnerDictionaryTest() {
+            var inner = Arguments.GetInnerDictionary();
+            Assert.IsNotNull(inner);
+            var expected = new Dictionary<string, string> {
+                { "null", string.Empty },
+                { "text", "abcd" },
+                { "validint", "5" },
+                { "validdouble", "5.5" },
+            };
+            CollectionAssert.AreEqual(expected, inner);
+        }
+
+        [TestMethod]
+        public void ForwardPositionalArgumentsTest() {
+            var str = "command help";
+            var args = Parser.ParseArguments(str);
+            args!.ForwardPositionalArguments();
+            Assert.AreEqual("help", args!.GetValue("0")!);
         }
     }
 }
