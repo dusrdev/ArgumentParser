@@ -54,10 +54,10 @@ public static class Parser {
     }
 
     /// <summary>
-    /// Parses a list of strings into an <see cref="Arguments"/> object
+    /// Parses an IList of strings into an <see cref="Arguments"/> object
     /// </summary>
     /// <param name="args"></param>
-    public static Arguments? ParseArguments(List<string> args) {
+    public static Arguments? ParseArguments(IList<string> args) {
         if (args.Count is 0) {
             return null;
         }
@@ -65,29 +65,29 @@ public static class Parser {
     }
 
     /// <summary>
-    /// Parses an array of strings into an <see cref="Arguments"/> object
+    /// Parses an IEnumerable of strings into an <see cref="Arguments"/> object
     /// </summary>
     /// <param name="args"></param>
-    public static Arguments? ParseArguments(string[] args) {
-        if (args.Length is 0) {
+    public static Arguments? ParseArguments(IEnumerable<string> args) {
+        var argList = args.ToList();
+        if (argList is null or { Count: 0 }) {
             return null;
         }
-        var argList = new List<string>(args);
         return ParseArgumentsInternal(argList);
     }
 
     // Parses a List<string> into a dictionary of arguments
-    private static Arguments? ParseArgumentsInternal(List<string> args) {
+    private static Arguments? ParseArgumentsInternal(IList<string> args) {
         var results = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
         int i = 0;
 
         while (i < args.Count && !IsParameterName(args[i])) {
-            results.Add(i.ToString(), args[i].Trim());
+            results.Add(i.ToString(), args[i]);
             i++;
         }
 
         while (i < args.Count) {
-            var current = args[i].Trim();
+            var current = args[i];
             // Ignore string as it is invalid parameter name
             if (!IsParameterName(current)) {
                 i++;
@@ -100,17 +100,16 @@ public static class Parser {
             }
             // Next is unavailable or another parameter
             if (i + 1 == args.Count || IsParameterName(args[i + 1])) {
-                results.Add(current[ii..].Trim(), string.Empty);
+                results.Add(current[ii..], string.Empty);
                 i++;
                 continue;
             }
             // Next is available and not a parameter but rather a value
-            var next = args[i + 1].Trim();
-            results.Add(current[ii..].Trim(), next);
+            results.Add(current[ii..], args[i + 1]);
             i += 2;
         }
 
-        return results.Count == 0 ? null : new Arguments(results);
+        return results.Count is 0 ? null : new Arguments(results);
     }
 
     // Checks whether a string starts with "-"
