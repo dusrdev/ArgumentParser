@@ -20,7 +20,6 @@ public class Arguments {
     /// <param name="key"></param>
     /// <param name="throwIfUnable">Throw an appropriate exception if unable to convert the value</param>
     /// <exception cref="KeyNotFoundException">If the key was not found</exception>
-    /// <exception cref="ArgumentException">If the value was null or whitespace</exception>
     /// <remarks>
     /// <para>A null return value is only possible if <paramref name="throwIfUnable"/> is false</para>
     /// <para>The <paramref name="key"/> will be added either to the message or as a property to the exceptions in order to maintain detail</para>
@@ -34,12 +33,6 @@ public class Arguments {
                 throw new KeyNotFoundException($"The positional argument for position {key} wasn't found.");
             }
             throw new KeyNotFoundException($"The named argument \"{key}\" wasn't found.");
-        }
-        if (string.IsNullOrWhiteSpace(value)) {
-            if (!throwIfUnable) {
-                return null;
-            }
-            throw new ArgumentException($"The value for named argument \"{key}\" was null or whitespace.");
         }
         return value;
     }
