@@ -6,18 +6,13 @@ namespace Sagittarius;
 /// Represents a builder for a CLI application.
 /// </summary>
 public sealed class CliBuilder : CommandEnabledCliBuilder, WriterEnabledCliBuilder, MetaDataEnabledCliBuilder {
-	/// <summary>
-	/// Creates a new instance of the <see cref="CliBuilder"/> class.
-	/// </summary>
-	public static CommandEnabledCliBuilder Create() => new CliBuilder();
-
 	private readonly List<Command> _commands;
 
 	private readonly Dictionary<string, string> _metaData;
 
 	private TextWriter _writer = TextWriter.Null;
 
-	private CliBuilder() {
+	internal CliBuilder() {
 		_commands = new();
 		_metaData = new();
 	}

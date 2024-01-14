@@ -7,6 +7,11 @@ namespace Sagittarius;
 /// Represents a command line interface application (Not necessarily console).
 /// </summary>
 public sealed class Cli {
+	/// <summary>
+	/// Creates a new instance of the <see cref="CliBuilder"/> class.
+	/// </summary>
+	public static CommandEnabledCliBuilder CreateBuilder() => new CliBuilder();
+
 	private readonly List<Command> _commands;
 	private readonly ErrorHelper _helper;
 	private readonly TextWriter _writer;
