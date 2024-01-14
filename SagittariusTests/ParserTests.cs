@@ -6,7 +6,7 @@ namespace Sagittarius.Tests;
 public class ParserTests {
     [TestMethod]
     public void SplitTest_Empty() {
-        Assert.IsTrue(!Parser.Split("").Any());
+        Assert.IsTrue(Parser.Split("").Count is 0);
     }
 
     [TestMethod]
@@ -25,7 +25,7 @@ public class ParserTests {
 
     [TestMethod]
     public void ParseArgumentsTest_Empty() {
-        Assert.IsNull(Parser.ParseArguments(Parser.Split("")));
+        Assert.IsNull(Parser.ParseArguments(""));
     }
 
     [TestMethod]
@@ -58,19 +58,8 @@ public class ParserTests {
     }
 
     [TestMethod]
-    public void ParseArgumentsTest_GeneralWithIEnumerable() {
-        var input = Parser.Split("command -p -f text.txt");
-        var expected = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase) {
-            { "0", "command" },
-            { "p", string.Empty },
-            { "f", "text.txt" }
-        };
-        CollectionAssert.AreEqual(expected, Parser.ParseArguments(input)!.GetInnerDictionary());
-    }
-
-    [TestMethod]
     public void ParseArgumentsTest_AllInclusive() {
-        var input = Parser.Split("command -p fast -f \"text.txt text2.txt\" -v");
+        var input = "command -p fast -f \"text.txt text2.txt\" -v";
         var expected = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase) {
             { "0", "command" },
             { "p", "fast" },
