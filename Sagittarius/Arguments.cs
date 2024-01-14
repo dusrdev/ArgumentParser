@@ -103,6 +103,8 @@ public sealed class Arguments {
         return result!;
     }
 
+    // Todo! Add an overload for enum types
+
     /// <summary>
     /// Validates the value of an argument by the key
     /// </summary>
