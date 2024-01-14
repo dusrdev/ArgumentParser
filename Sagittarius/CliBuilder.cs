@@ -23,25 +23,25 @@ public sealed class CliBuilder : CommandEnabledCliBuilder, WriterEnabledCliBuild
 	}
 
 /// <inheritdoc/>
-	public CommandEnabledCliBuilder AddCommand(Command command) {
+	public WriterEnabledCliBuilder AddCommand(Command command) {
 		_commands.Add(command);
 		return this;
 	}
 
 /// <inheritdoc/>
-	public CommandEnabledCliBuilder AddCommands(params Command[] commands) {
+	public WriterEnabledCliBuilder AddCommands(params Command[] commands) {
 		_commands.AddRange(commands);
 		return this;
 	}
 
 /// <inheritdoc/>
-	public CommandEnabledCliBuilder AddCommands(ReadOnlySpan<Command> commands) {
+	public WriterEnabledCliBuilder AddCommands(ReadOnlySpan<Command> commands) {
 		_commands.AddRange(commands);
 		return this;
 	}
 
 /// <inheritdoc/>
-	public CommandEnabledCliBuilder AddCommandsFromAssembly(Assembly assembly) {
+	public WriterEnabledCliBuilder AddCommandsFromAssembly(Assembly assembly) {
 		foreach (Type type in assembly.GetTypes()) {
 			if (type.IsAssignableTo(typeof(Command))) {
 				_commands.Add((Command)Activator.CreateInstance(type)!);
@@ -51,18 +51,18 @@ public sealed class CliBuilder : CommandEnabledCliBuilder, WriterEnabledCliBuild
 	}
 
 /// <inheritdoc/>
-	public CommandEnabledCliBuilder AddCommandsFromExecutingAssembly() {
+	public WriterEnabledCliBuilder AddCommandsFromExecutingAssembly() {
 		return AddCommandsFromAssembly(Assembly.GetExecutingAssembly());
 	}
 
 /// <inheritdoc/>
-	public WriterEnabledCliBuilder SetWriter(TextWriter writer) {
+	public MetaDataEnabledCliBuilder SetOutputWriter(TextWriter writer) {
 		_writer = writer;
 		return this;
 	}
 
 /// <inheritdoc/>
-	public WriterEnabledCliBuilder SetConsoleWriter() {
+	public MetaDataEnabledCliBuilder UseConsoleAsOutputWriter() {
 		_writer = Console.Out;
 		return this;
 	}

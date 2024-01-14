@@ -10,24 +10,24 @@ public interface CommandEnabledCliBuilder {
 	/// Adds a command to the CLI.
 	/// </summary>
 	/// <param name="command">The command to add.</param>
-	CommandEnabledCliBuilder AddCommand(Command command);
+	WriterEnabledCliBuilder AddCommand(Command command);
 	/// <summary>
 	/// Adds the specified commands to the command-enabled CLI builder.
 	/// </summary>
 	/// <param name="commands">The commands to add.</param>
-	CommandEnabledCliBuilder AddCommands(params Command[] commands);
+	WriterEnabledCliBuilder AddCommands(params Command[] commands);
 	/// <summary>
 	/// Represents a builder for a command-enabled CLI application.
 	/// </summary>
-	CommandEnabledCliBuilder AddCommands(ReadOnlySpan<Command> commands);
+	WriterEnabledCliBuilder AddCommands(ReadOnlySpan<Command> commands);
 	/// <summary>
 	/// Adds commands from the specified assembly to the command-enabled CLI builder.
 	/// </summary>
-	CommandEnabledCliBuilder AddCommandsFromAssembly(Assembly assembly);
+	WriterEnabledCliBuilder AddCommandsFromAssembly(Assembly assembly);
 	/// <summary>
 	/// Adds commands from the executing assembly to the command-enabled CLI builder.
 	/// </summary>
-	CommandEnabledCliBuilder AddCommandsFromExecutingAssembly();
+	WriterEnabledCliBuilder AddCommandsFromExecutingAssembly();
 }
 
 /// <summary>
@@ -38,11 +38,11 @@ public interface WriterEnabledCliBuilder {
 	/// Sets the writer for the CLI.
 	/// </summary>
 	/// <param name="writer"></param>
-	WriterEnabledCliBuilder SetWriter(TextWriter writer);
+	MetaDataEnabledCliBuilder SetOutputWriter(TextWriter writer);
 	/// <summary>
 	/// Sets the console writer for the CLI.
 	/// </summary>
-	WriterEnabledCliBuilder SetConsoleWriter();
+	MetaDataEnabledCliBuilder UseConsoleAsOutputWriter();
 }
 
 /// <summary>
@@ -57,6 +57,10 @@ public interface MetaDataEnabledCliBuilder {
 	/// Sets the application description for the CLI.
 	/// </summary>
 	MetaDataEnabledCliBuilder SetApplicationDescription(string description);
+	/// <summary>
+	/// Sets the application version for the CLI.
+	/// </summary>
+	MetaDataEnabledCliBuilder SetApplicationVersion(string version);
 	/// <summary>
 	/// Builds the CLI.
 	/// </summary>

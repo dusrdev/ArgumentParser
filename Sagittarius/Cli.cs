@@ -33,17 +33,39 @@ public sealed class Cli {
 			return _helper.Throw("No command specified", 404);
 		}
 		var arguments = Parser.ParseArguments(args.AsSpan());
+		return RunAsync(arguments, commandNameRequired);
+	}
+
+	/// <summary>
+	/// Runs the CLI application with the specified arguments.
+	/// </summary>
+	public ValueTask<int> RunAsync(ReadOnlySpan<string> args, bool commandNameRequired = true) {
+		if (args.Length is 0) {
+			return _helper.Throw("No command specified", 404);
+		}
+		var arguments = Parser.ParseArguments(args, StringComparer.CurrentCultureIgnoreCase);
+		return RunAsync(arguments, commandNameRequired);
+	}
+
+	/// <summary>
+	/// Runs the CLI application with the specified arguments.
+	/// </summary>
+	public ValueTask<int> RunAsync(Arguments? arguments, bool commandNameRequired = true) {
 		if (arguments is null) {
 			return _helper.Throw("Input could not be parsed", 400);
 		}
 		if (!commandNameRequired) {
 			if (_commands.Count is 1) {
 				if (arguments.Contains("help")) {
-					_writer.WriteLine(_commands[0].Usage);
+					_writer.WriteLine(_commands[0].GetHelp());
 				}
 				return _commands[0].ExecuteAsync(arguments);
 			}
 			return _helper.Throw("Command name is required when using more than one command", 405);
+		}
+		if (arguments.Count is 1 && arguments.Contains("help")) {
+			_writer.WriteLine(_help);
+			return ValueTask.FromResult(0);
 		}
 		string commandName = arguments.GetValue("0", true);
 		Command? command = null;
@@ -57,7 +79,7 @@ public sealed class Cli {
 			return _helper.Throw($"Command \"{commandName}\" not found.", 404);
 		}
 		if (arguments.Contains("help")) {
-			_writer.WriteLine(command.Usage);
+			_writer.WriteLine(command.GetHelp());
 			return ValueTask.FromResult(0);
 		}
 		return command.ExecuteAsync(arguments.ForwardPositionalArguments());
@@ -65,6 +87,7 @@ public sealed class Cli {
 
 	private string CreateHelp() {
 		var builder = new StringBuilder();
+		builder.AppendLine();
 		if (_metaData.TryGetValue("ApplicationName", out string? name)) {
 			builder.AppendLine(name)
                 .AppendLine();
@@ -75,24 +98,24 @@ public sealed class Cli {
 		}
 		if (_metaData.TryGetValue("ApplicationVersion", out string? version)) {
 			builder.Append("Version: ")
-                .Append(version)
+                .AppendLine(version)
 				.AppendLine();
 		}
-		builder.AppendLine("Commands:")
-            .AppendLine();
+		builder.AppendLine("Commands:");
+		var maxCommandLength = _commands.Max(static c => c.Name.Length);
 		foreach (Command command in CollectionsMarshal.AsSpan(_commands)) {
-			builder.Append(command.Name)
+			builder.Append(command.Name.PadRight(maxCommandLength))
                 .Append(" - ")
                 .AppendLine(command.Description);
 		}
 		builder
-			.AppendLine("To get help for a command, use the following syntax:")
 			.AppendLine()
+			.AppendLine("To get help for a command, use the following syntax:")
 			.AppendLine("<command> --help")
 			.AppendLine()
 			.AppendLine("To get help for the application, use the following syntax:")
-			.AppendLine()
-			.AppendLine("--help");
+			.AppendLine("--help")
+			.AppendLine();
 		return builder.ToString();
 	}
 
@@ -104,7 +127,7 @@ public sealed class Cli {
 		}
 
 		public ValueTask<int> Throw(string message, int code) {
-			_writer.WriteLine($"{message}. Error:{code}");
+			_writer.WriteLine($"{message}. [ErrorCode: {code}]");
 			return ValueTask.FromResult(code);
 		}
 	}

@@ -82,6 +82,28 @@ public sealed class Arguments {
     }
 
     /// <summary>
+    /// Attempts to convert a value of an argument by the key to an integer
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="defaultValue">If key wasn't found or parsing failed</param>
+    /// <exception cref="KeyNotFoundException">If the key was not found</exception>
+    /// <exception cref="ArgumentException">If the value was null or could not be parsed</exception>
+    /// <remarks>
+    /// <para>The <paramref name="key"/> will be added either to the message or as a property to the exceptions in order to maintain detail</para>
+    /// </remarks>
+    public T GetValue<T>(string key, T defaultValue) where T : IParsable<T> {
+        string val = GetValue(key, false);
+        if (val.Length is 0) {
+            return defaultValue;
+        }
+        var wasParsed = T.TryParse(val, CultureInfo.CurrentCulture, out T? result);
+        if (!wasParsed) {
+            return defaultValue;
+        }
+        return result!;
+    }
+
+    /// <summary>
     /// Validates the value of an argument by the key
     /// </summary>
     /// <param name="key">by name (or number if positional argument)</param>
