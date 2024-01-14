@@ -2,33 +2,46 @@ using System.Reflection;
 
 namespace Sagittarius;
 
-public sealed class CliBuilder {
-	public static CliBuilder Create() => new();
+/// <summary>
+/// Represents a builder for a CLI application.
+/// </summary>
+public sealed class CliBuilder : CommandEnabledCliBuilder, WriterEnabledCliBuilder, MetaDataEnabledCliBuilder {
+	/// <summary>
+	/// Creates a new instance of the <see cref="CliBuilder"/> class.
+	/// </summary>
+	public static CommandEnabledCliBuilder Create() => new CliBuilder();
 
 	private readonly List<Command> _commands;
+
+	private readonly Dictionary<string, string> _metaData;
 
 	private TextWriter _writer = TextWriter.Null;
 
 	private CliBuilder() {
 		_commands = new();
+		_metaData = new();
 	}
 
-	public CliBuilder AddCommand(Command command) {
+/// <inheritdoc/>
+	public CommandEnabledCliBuilder AddCommand(Command command) {
 		_commands.Add(command);
 		return this;
 	}
 
-	public CliBuilder AddCommands(params Command[] commands) {
+/// <inheritdoc/>
+	public CommandEnabledCliBuilder AddCommands(params Command[] commands) {
 		_commands.AddRange(commands);
 		return this;
 	}
 
-	public CliBuilder AddCommands(ReadOnlySpan<Command> commands) {
+/// <inheritdoc/>
+	public CommandEnabledCliBuilder AddCommands(ReadOnlySpan<Command> commands) {
 		_commands.AddRange(commands);
 		return this;
 	}
 
-	public CliBuilder AddCommandsFromAssembly(Assembly assembly) {
+/// <inheritdoc/>
+	public CommandEnabledCliBuilder AddCommandsFromAssembly(Assembly assembly) {
 		foreach (Type type in assembly.GetTypes()) {
 			if (type.IsAssignableTo(typeof(Command))) {
 				_commands.Add((Command)Activator.CreateInstance(type)!);
@@ -37,24 +50,46 @@ public sealed class CliBuilder {
 		return this;
 	}
 
-	public CliBuilder AddCommandsFromExecutingAssembly() {
+/// <inheritdoc/>
+	public CommandEnabledCliBuilder AddCommandsFromExecutingAssembly() {
 		return AddCommandsFromAssembly(Assembly.GetExecutingAssembly());
 	}
 
-	public CliBuilder SetWriter(TextWriter writer) {
+/// <inheritdoc/>
+	public WriterEnabledCliBuilder SetWriter(TextWriter writer) {
 		_writer = writer;
 		return this;
 	}
 
-	public CliBuilder SetConsoleWriter() {
+/// <inheritdoc/>
+	public WriterEnabledCliBuilder SetConsoleWriter() {
 		_writer = Console.Out;
 		return this;
 	}
 
+/// <inheritdoc/>
+	public MetaDataEnabledCliBuilder SetApplicationName(string name) {
+		_metaData["ApplicationName"] = name;
+		return this;
+	}
+
+/// <inheritdoc/>
+	public MetaDataEnabledCliBuilder SetApplicationDescription(string description) {
+		_metaData["ApplicationDescription"] = description;
+		return this;
+	}
+
+/// <inheritdoc/>
+	public MetaDataEnabledCliBuilder SetApplicationVersion(string version) {
+		_metaData["ApplicationVersion"] = version;
+		return this;
+	}
+
+/// <inheritdoc/>
 	public Cli Build() {
 		if (_commands.Count is 0) {
 			throw new InvalidOperationException("No commands were added.");
 		}
-		return new Cli(_commands, _writer);
+		return new Cli(_commands, _writer, _metaData);
 	}
 }

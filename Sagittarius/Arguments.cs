@@ -21,6 +21,11 @@ public sealed class Arguments {
     }
 
     /// <summary>
+    /// Gets the number of arguments.
+    /// </summary>
+    public int Count => _arguments.Count;
+
+    /// <summary>
     /// Checks if the specified key exists in the arguments.
     /// </summary>
     /// <param name="key">The key to check.</param>
