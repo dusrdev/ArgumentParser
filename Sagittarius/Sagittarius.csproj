@@ -1,17 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <Authors>David Shnayder</Authors>
-    <Copyright>David Shnayder - 2022</Copyright>
+    <Copyright>David Shnayder</Copyright>
     <Description>Performant reflection-less argument parser</Description>
     <PackageProjectUrl>https://github.com/dusrdev/Sagittarius</PackageProjectUrl>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>1.0.2</Version>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
